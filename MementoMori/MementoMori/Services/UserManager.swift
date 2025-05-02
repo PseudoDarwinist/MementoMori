@@ -84,6 +84,9 @@ final class UserManager: ObservableObject {
             lifeExpectancy: profile.lifeExpectancy,
             forceFresh: true
         )
+        
+        // Post notification about profile change
+        NotificationCenter.default.post(name: .userProfileDidChange, object: self)
     }
     
     /// Update specific user profile fields
@@ -150,6 +153,9 @@ final class UserManager: ObservableObject {
                     forceFresh: true
                 )
             }
+            
+            // Post notification about profile change
+            NotificationCenter.default.post(name: .userProfileDidChange, object: self)
         }
     }
     
@@ -176,6 +182,9 @@ final class UserManager: ObservableObject {
             lifeExpectancy: userProfile.lifeExpectancy,
             forceFresh: true
         )
+        
+        // Post notification about profile change
+        NotificationCenter.default.post(name: .userProfileDidChange, object: self)
     }
     
     // MARK: - Private Methods

@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct MementoMoriApp: App {
     @StateObject private var appState = AppState.shared
+    @StateObject private var contentProvider = ContentProvider()
     
     var body: some Scene {
         WindowGroup {
@@ -18,6 +19,7 @@ struct MementoMoriApp: App {
                 MainView()
                     .preferredColorScheme(.dark) // Force dark mode
                     .tint(ColorTheme.accentPrimary) // Set tint color for interactive elements
+                    .environmentObject(contentProvider)
             } else {
                 // Onboarding flow
                 OnboardingView()

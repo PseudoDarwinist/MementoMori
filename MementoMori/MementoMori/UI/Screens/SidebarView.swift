@@ -48,6 +48,17 @@ struct SidebarView: View {
                         }
                     )
                     
+                    // Inspiration button
+                    SidebarButton(
+                        icon: NavigationTab.inspiration.icon,
+                        isSelected: selectedTab == .inspiration,
+                        action: {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                selectedTab = .inspiration
+                            }
+                        }
+                    )
+                    
                     // Statistics button
                     SidebarButton(
                         icon: NavigationTab.statistics.icon,
@@ -134,6 +145,7 @@ struct SidebarButton: View {
 enum NavigationTab: CaseIterable {
     case timer
     case journal
+    case inspiration
     case statistics
     case profile
     case settings
@@ -144,6 +156,8 @@ enum NavigationTab: CaseIterable {
             return "hourglass"
         case .journal:
             return "book.fill"
+        case .inspiration:
+            return "sparkles"
         case .statistics:
             return "chart.bar.fill"
         case .profile:
@@ -159,6 +173,8 @@ enum NavigationTab: CaseIterable {
             return "Timer"
         case .journal:
             return "Journal"
+        case .inspiration:
+            return "Inspiration"
         case .statistics:
             return "Statistics"
         case .profile:

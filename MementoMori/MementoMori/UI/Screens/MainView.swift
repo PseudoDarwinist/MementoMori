@@ -27,6 +27,10 @@ struct MainView: View {
                         .ignoresSafeArea(.keyboard, edges: .bottom)
                         .tag(NavigationTab.journal)
                     
+                    InspirationView()
+                        .ignoresSafeArea(.keyboard, edges: .bottom)
+                        .tag(NavigationTab.inspiration)
+                    
                     StatisticsView()
                         .ignoresSafeArea(.keyboard, edges: .bottom)
                         .tag(NavigationTab.statistics)

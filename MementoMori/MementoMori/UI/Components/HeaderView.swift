@@ -76,6 +76,5 @@ struct HeaderActionButton: Identifiable {
     }
     .padding()
     .background(ColorTheme.backgroundPrimary)
-    .previewLayout(.sizeThatFits)
     .preferredColorScheme(.dark)
 } 

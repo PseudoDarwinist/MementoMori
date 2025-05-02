@@ -61,6 +61,20 @@ struct TabBarView: View {
                 
                 Spacer()
                 
+                // Inspiration tab
+                TabBarButton(
+                    icon: NavigationTab.inspiration.icon,
+                    title: NavigationTab.inspiration.title,
+                    isSelected: selectedTab == .inspiration,
+                    action: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            selectedTab = .inspiration
+                        }
+                    }
+                )
+                
+                Spacer()
+                
                 // Statistics tab
                 TabBarButton(
                     icon: NavigationTab.statistics.icon,

@@ -61,6 +61,5 @@ extension View {
     }
     .padding()
     .background(ColorTheme.backgroundPrimary)
-    .previewLayout(.sizeThatFits)
     .preferredColorScheme(.dark)
 } 
