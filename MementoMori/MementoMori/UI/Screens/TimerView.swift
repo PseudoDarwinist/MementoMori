@@ -9,44 +9,42 @@ struct TimerView: View {
     /// Timer for updating seconds
     @State private var timer: AnyCancellable?
     
-    /// Whether to show detailed time (including hours, minutes, seconds)
-    @State private var showDetailedTime: Bool = false
-    
     // MARK: - Body
     
     var body: some View {
-        GeometryReader { geometry in
-            VStack(spacing: 0) {
+        MainContainer {
+            VStack(spacing: 1.remToPt()) {
                 // Header
-                Text(userManager.userProfile.timerName.uppercased())
-                    .logoTextStyle()
-                    .padding(.top, geometry.size.height * 0.1)
-                    .padding(.bottom, geometry.size.height * 0.05)
-                
-                Spacer()
+                HeaderView(
+                    title: userManager.userProfile.timerName,
+                    actionButtons: [
+                        HeaderActionButton(icon: "gearshape", action: { 
+                            // TODO: Navigate to settings
+                        })
+                    ]
+                )
+                .padding(.bottom, 0.3.remToPt())
                 
                 // Timer display
                 TimerDigits(
                     timeData: userManager.timeData,
-                    showSeconds: showDetailedTime,
                     reducedMotion: userManager.userProfile.usesReducedMotion
                 )
-                .frame(width: min(geometry.size.width * 0.9, 400))
-                .onTapGesture {
-                    // Toggle detailed view on tap
-                    withAnimation {
-                        showDetailedTime.toggle()
-                    }
-                }
-                
-                Spacer()
+                .frame(maxWidth: 420)
                 
                 // Quote Container
                 QuoteContainer()
-                    .padding(.horizontal, 30)
-                    .padding(.bottom, geometry.size.height * 0.1)
+                    .frame(maxWidth: 650)
+                    .padding(.vertical, 0.8.remToPt())
+                
+                // Daily Inspirations Carousel - expanded to fill remaining space
+                InspirationCarousel()
+                    .padding(.top, 0.3.remToPt())
+                    .layoutPriority(1)
+                    .frame(maxHeight: .infinity)
+                
+                // Removed Spacer since we want the carousel to expand
             }
-            .frame(width: geometry.size.width)
         }
         .onAppear {
             // Refresh time data when view appears

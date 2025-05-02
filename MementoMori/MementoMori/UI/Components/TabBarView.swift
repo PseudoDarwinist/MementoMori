@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// TabBar navigation component for the app's bottom navigation
+/// Tab bar navigation component for the app
 struct TabBarView: View {
     // MARK: - Properties
     
@@ -11,37 +11,83 @@ struct TabBarView: View {
     
     var body: some View {
         ZStack {
-            // Background with blur
-            Rectangle()
-                .fill(Color(UIColor(red: 3/255, green: 20/255, blue: 41/255, alpha: 0.95)))
-                .frame(height: 83)
-                .background(
-                    BackdropBlurView(style: .systemUltraThinMaterialDark)
-                        .edgesIgnoringSafeArea(.bottom)
-                )
-                .overlay(
-                    // Add top divider
-                    Rectangle()
-                        .frame(height: 0.5)
-                        .foregroundColor(Color.white.opacity(0.1))
-                        .padding(.bottom, 82),
-                    alignment: .top
-                )
+            // Background with blur - using the specified color #031429 with 20% opacity
+            ZStack {
+                Color(hex: "031429").opacity(0.2)
+                
+                // Add blur effect for the frosted look
+                VisualEffectView(effect: UIBlurEffect(style: .dark))
+                    .opacity(0.8)
+            }
+            .frame(height: 60)
+            .overlay(
+                Rectangle()
+                    .frame(height: 1)
+                    .foregroundColor(Color.white.opacity(0.03))
+                    .offset(y: -0.5),
+                alignment: .top
+            )
+            .ignoresSafeArea(edges: .bottom)
             
-            // Tab bar content
+            // Tab items
             HStack(spacing: 0) {
-                ForEach(NavigationTab.allCases.filter { $0 != .settings }, id: \.self) { tab in
-                    TabBarButton(
-                        icon: tab.icon,
-                        title: tab.title,
-                        isSelected: selectedTab == tab,
-                        action: {
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                selectedTab = tab
-                            }
+                Spacer()
+                
+                // Timer tab
+                TabBarButton(
+                    icon: NavigationTab.timer.icon,
+                    title: NavigationTab.timer.title,
+                    isSelected: selectedTab == .timer,
+                    action: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            selectedTab = .timer
                         }
-                    )
-                }
+                    }
+                )
+                
+                Spacer()
+                
+                // Journal tab
+                TabBarButton(
+                    icon: NavigationTab.journal.icon,
+                    title: NavigationTab.journal.title,
+                    isSelected: selectedTab == .journal,
+                    action: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            selectedTab = .journal
+                        }
+                    }
+                )
+                
+                Spacer()
+                
+                // Statistics tab
+                TabBarButton(
+                    icon: NavigationTab.statistics.icon,
+                    title: NavigationTab.statistics.title,
+                    isSelected: selectedTab == .statistics,
+                    action: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            selectedTab = .statistics
+                        }
+                    }
+                )
+                
+                Spacer()
+                
+                // Profile tab
+                TabBarButton(
+                    icon: NavigationTab.profile.icon,
+                    title: NavigationTab.profile.title,
+                    isSelected: selectedTab == .profile,
+                    action: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            selectedTab = .profile
+                        }
+                    }
+                )
+                
+                Spacer()
                 
                 // Settings tab
                 TabBarButton(
@@ -49,20 +95,21 @@ struct TabBarView: View {
                     title: NavigationTab.settings.title,
                     isSelected: selectedTab == .settings,
                     action: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        withAnimation(.easeInOut(duration: 0.3)) {
                             selectedTab = .settings
                         }
                     }
                 )
+                
+                Spacer()
             }
-            .padding(.top, 5)
-            .padding(.bottom, 25) // Add padding for safe area
+            .padding(.vertical, 6)
+            .frame(height: 60)
         }
-        .edgesIgnoringSafeArea(.bottom)
     }
 }
 
-// MARK: - TabBar Button Component
+// MARK: - Tab Bar Button Component
 
 /// Button used in the tab bar for navigation
 struct TabBarButton: View {
@@ -79,45 +126,27 @@ struct TabBarButton: View {
         Button(action: action) {
             VStack(spacing: 4) {
                 Image(systemName: icon)
-                    .font(.system(size: 24))
+                    .font(.system(size: 20))
                     .foregroundColor(isSelected ? ColorTheme.accentPrimary : ColorTheme.textSecondary)
                 
                 Text(title)
                     .font(.system(size: 10))
                     .foregroundColor(isSelected ? ColorTheme.accentPrimary : ColorTheme.textSecondary)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
+            .frame(height: 48)
         }
         .buttonStyle(PlainButtonStyle())
     }
 }
 
-// MARK: - Backdrop Blur View
-
-/// UIViewRepresentable for UIKit blur effect
-struct BackdropBlurView: UIViewRepresentable {
-    let style: UIBlurEffect.Style
-    
-    func makeUIView(context: Context) -> UIVisualEffectView {
-        return UIVisualEffectView(effect: UIBlurEffect(style: style))
-    }
-    
-    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
-        uiView.effect = UIBlurEffect(style: style)
-    }
-}
-
 // MARK: - Preview
 
-struct TabBarView_Previews: PreviewProvider {
-    static var previews: some View {
-        ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
-            
+#Preview {
+    ZStack {
+        Color.black.edgesIgnoringSafeArea(.all)
+        VStack {
+            Spacer()
             TabBarView(selectedTab: .constant(.timer))
-                .frame(maxHeight: .infinity, alignment: .bottom)
         }
-        .preferredColorScheme(.dark)
     }
 } 

@@ -1,120 +1,187 @@
 import SwiftUI
 
 struct ProfileView: View {
+    // Add state objects for AppState and UserManager
+    @StateObject private var appState = AppState.shared
+    @ObservedObject private var userManager = UserManager.shared
+    
+    // Add state for confirmation dialog
+    @State private var showingResetConfirmation = false
+    
     var body: some View {
-        VStack(spacing: 2.remToPt()) {
-            // Header
-            Text("PROFILE")
-                .headingStyle()
-            
-            // Profile content
+        MainContainer {
             VStack(spacing: 2.remToPt()) {
-                // Profile header
+                // Header
+                Text("PROFILE")
+                    .headingStyle()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 0.5.remToPt())
+                
+                // Profile content
+                VStack(spacing: 2.remToPt()) {
+                    // Profile header
+                    VStack(spacing: 1.remToPt()) {
+                        // Avatar
+                        Image(systemName: "person.circle.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 100, height: 100)
+                            .foregroundColor(ColorTheme.textSecondary)
+                        
+                        // Name - Use the actual name from user profile
+                        Text(userManager.userProfile.name)
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(ColorTheme.textPrimary)
+                        
+                        // Basic info - Format the actual birth date
+                        Text("Born: \(formattedBirthDate)")
+                            .font(.system(size: 16))
+                            .foregroundColor(ColorTheme.textSecondary)
+                    }
+                    .padding(2.remToPt())
+                    .glassMorphism(cornerRadius: 1.remToPt(), opacity: 0.15)
+                    
+                    // Life data
+                    VStack(alignment: .leading, spacing: 1.5.remToPt()) {
+                        SectionHeader(title: "LIFE DATA")
+                        
+                        // Life expectancy - Use actual value
+                        ProfileDataRow(
+                            icon: "hourglass",
+                            title: "Life Expectancy",
+                            value: "\(userManager.userProfile.lifeExpectancy) years"
+                        )
+                        
+                        // Age - Calculate from birth date
+                        ProfileDataRow(
+                            icon: "calendar",
+                            title: "Current Age",
+                            value: "\(currentAge) years"
+                        )
+                        
+                        // Remaining - Calculate from expectancy and age
+                        ProfileDataRow(
+                            icon: "clock",
+                            title: "Time Remaining",
+                            value: "≈ \(remainingYears) years"
+                        )
+                    }
+                    .padding(1.5.remToPt())
+                    .background(ColorTheme.cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(ColorTheme.borderColor, lineWidth: 1)
+                    )
+                    
+                    // Preferences
+                    VStack(alignment: .leading, spacing: 1.5.remToPt()) {
+                        SectionHeader(title: "PREFERENCES")
+                        
+                        // Display name - Use actual timer name
+                        ProfileDataRow(
+                            icon: "textformat",
+                            title: "Display Name",
+                            value: userManager.userProfile.timerName
+                        )
+                        
+                        // Theme
+                        ProfileDataRow(
+                            icon: "paintpalette",
+                            title: "Theme",
+                            value: "Dark"
+                        )
+                        
+                        // Notifications
+                        ProfileDataRow(
+                            icon: "bell",
+                            title: "Notifications",
+                            value: "On"
+                        )
+                    }
+                    .padding(1.5.remToPt())
+                    .background(ColorTheme.cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(ColorTheme.borderColor, lineWidth: 1)
+                    )
+                }
+                
+                Spacer(minLength: 2.remToPt())
+                
+                // Button group
                 VStack(spacing: 1.remToPt()) {
-                    // Avatar
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 100, height: 100)
+                    // Edit button
+                    Button(action: {}) {
+                        HStack {
+                            Image(systemName: "pencil")
+                            Text("Edit Profile")
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(ColorTheme.accentPrimary)
+                        .foregroundColor(.white)
+                        .cornerRadius(25)
+                    }
+                    
+                    // Reset onboarding button (for testing)
+                    Button(action: {
+                        showingResetConfirmation = true
+                    }) {
+                        HStack {
+                            Image(systemName: "arrow.counterclockwise")
+                            Text("Reset Onboarding")
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(ColorTheme.cardBackground)
                         .foregroundColor(ColorTheme.textSecondary)
-                    
-                    // Name
-                    Text("John Doe")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(ColorTheme.textPrimary)
-                    
-                    // Basic info
-                    Text("Born: January 1, 1990")
-                        .font(.system(size: 16))
-                        .foregroundColor(ColorTheme.textSecondary)
+                        .cornerRadius(25)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 25)
+                                .stroke(ColorTheme.borderColor, lineWidth: 1)
+                        )
+                    }
+                    .confirmationDialog(
+                        "Reset Onboarding",
+                        isPresented: $showingResetConfirmation,
+                        titleVisibility: .visible
+                    ) {
+                        Button("Reset", role: .destructive) {
+                            appState.resetOnboarding()
+                        }
+                        Button("Cancel", role: .cancel) {}
+                    } message: {
+                        Text("This will restart the onboarding process. Your data will be preserved.")
+                    }
                 }
-                .padding(2.remToPt())
-                .glassMorphism(cornerRadius: 1.remToPt(), opacity: 0.15)
-                
-                // Life data
-                VStack(alignment: .leading, spacing: 1.5.remToPt()) {
-                    SectionHeader(title: "LIFE DATA")
-                    
-                    // Life expectancy
-                    ProfileDataRow(
-                        icon: "hourglass",
-                        title: "Life Expectancy",
-                        value: "90 years"
-                    )
-                    
-                    // Age
-                    ProfileDataRow(
-                        icon: "calendar",
-                        title: "Current Age",
-                        value: "33 years"
-                    )
-                    
-                    // Remaining
-                    ProfileDataRow(
-                        icon: "clock",
-                        title: "Time Remaining",
-                        value: "≈ 57 years"
-                    )
-                }
-                .padding(1.5.remToPt())
-                .background(ColorTheme.cardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(ColorTheme.borderColor, lineWidth: 1)
-                )
-                
-                // Preferences
-                VStack(alignment: .leading, spacing: 1.5.remToPt()) {
-                    SectionHeader(title: "PREFERENCES")
-                    
-                    // Display name
-                    ProfileDataRow(
-                        icon: "textformat",
-                        title: "Display Name",
-                        value: "My Life Timer"
-                    )
-                    
-                    // Theme
-                    ProfileDataRow(
-                        icon: "paintpalette",
-                        title: "Theme",
-                        value: "Dark"
-                    )
-                    
-                    // Notifications
-                    ProfileDataRow(
-                        icon: "bell",
-                        title: "Notifications",
-                        value: "On"
-                    )
-                }
-                .padding(1.5.remToPt())
-                .background(ColorTheme.cardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(ColorTheme.borderColor, lineWidth: 1)
-                )
             }
-            .padding(.vertical, 1.remToPt())
-            
-            Spacer()
-            
-            // Edit button
-            Button(action: {}) {
-                HStack {
-                    Image(systemName: "pencil")
-                    Text("Edit Profile")
-                }
-                .padding()
-                .background(ColorTheme.accentPrimary)
-                .foregroundColor(.white)
-                .cornerRadius(25)
-            }
-            .padding(.bottom, 1.remToPt())
+            .frame(maxWidth: 800)
         }
-        .padding(2.remToPt())
+    }
+    
+    // MARK: - Computed Properties
+    
+    /// Format the birth date for display
+    private var formattedBirthDate: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
+        return formatter.string(from: userManager.userProfile.birthDate)
+    }
+    
+    /// Calculate current age in years
+    private var currentAge: Int {
+        let calendar = Calendar.current
+        let ageComponents = calendar.dateComponents([.year], from: userManager.userProfile.birthDate, to: Date())
+        return ageComponents.year ?? 0
+    }
+    
+    /// Calculate remaining years based on life expectancy
+    private var remainingYears: Int {
+        let remaining = userManager.userProfile.lifeExpectancy - currentAge
+        return max(0, remaining)
     }
 }
 

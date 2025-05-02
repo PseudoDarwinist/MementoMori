@@ -19,25 +19,25 @@ struct QuoteView: View {
     // MARK: - Body
     
     var body: some View {
-        VStack(spacing: 1.remToPt()) {
+        VStack(spacing: 0.6.remToPt()) {
             // Quote text
             Text("\"\(text)\"")
-                .font(.system(size: 1.1.remToPt(), weight: .light, design: .serif))
+                .font(.system(size: 0.95.remToPt(), weight: .light, design: .serif))
                 .italic()
                 .foregroundColor(ColorTheme.textPrimary)
                 .multilineTextAlignment(.center)
-                .lineSpacing(0.6.remToPt()) // 1.6 line height
+                .lineSpacing(0.4.remToPt()) // Reduced line height
                 .fixedSize(horizontal: false, vertical: true)
             
             // Attribution
             Text("— \(attribution)")
-                .font(.system(size: 0.8.remToPt(), weight: .regular))
+                .font(.system(size: 0.7.remToPt(), weight: .regular))
                 .foregroundColor(ColorTheme.textSecondary)
                 .multilineTextAlignment(.center)
-                .padding(.top, 0.5.remToPt())
+                .padding(.top, 0.3.remToPt())
         }
-        .padding([.top, .bottom], 1.remToPt())
-        .padding([.leading, .trailing], 2.remToPt())
+        .padding([.top, .bottom], 0.7.remToPt())
+        .padding([.leading, .trailing], 1.5.remToPt())
         .frame(maxWidth: 650) // Max width constraint
         .opacity(opacity)
         .onAppear {

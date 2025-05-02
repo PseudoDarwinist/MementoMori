@@ -2,13 +2,15 @@ import SwiftUI
 
 struct StatisticsView: View {
     var body: some View {
-        VStack(spacing: 2.remToPt()) {
-            // Header
-            Text("STATISTICS")
-                .headingStyle()
-            
-            // Stats content
-            ScrollView {
+        MainContainer {
+            VStack(spacing: 2.remToPt()) {
+                // Header
+                Text("STATISTICS")
+                    .headingStyle()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 0.5.remToPt())
+                
+                // Stats content
                 VStack(spacing: 1.5.remToPt()) {
                     // Life percentage stat
                     StatCard(
@@ -39,8 +41,8 @@ struct StatisticsView: View {
                     )
                 }
             }
+            .frame(maxWidth: 800)
         }
-        .padding(2.remToPt())
     }
 }
 

@@ -2,38 +2,42 @@ import SwiftUI
 
 struct JournalView: View {
     var body: some View {
-        VStack(spacing: 2.remToPt()) {
-            // Header
-            Text("JOURNAL")
-                .headingStyle()
-            
-            // Journal entries list placeholder
-            VStack(spacing: 1.remToPt()) {
-                ForEach(1...5, id: \.self) { index in
-                    JournalEntryRow(
-                        date: "2022-0\(index)-\(10+index)",
-                        title: "Journal Entry #\(index)",
-                        preview: "This is a preview of the journal entry content. Tap to view the full entry."
-                    )
+        MainContainer {
+            VStack(spacing: 2.remToPt()) {
+                // Header
+                Text("JOURNAL")
+                    .headingStyle()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 1.remToPt())
+                
+                // Journal entries list placeholder
+                VStack(spacing: 1.remToPt()) {
+                    ForEach(1...5, id: \.self) { index in
+                        JournalEntryRow(
+                            date: "2022-0\(index)-\(10+index)",
+                            title: "Journal Entry #\(index)",
+                            preview: "This is a preview of the journal entry content. Tap to view the full entry."
+                        )
+                    }
                 }
-            }
-            
-            Spacer()
-            
-            // New entry button
-            Button(action: {}) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text("New Entry")
+                
+                Spacer(minLength: 2.remToPt())
+                
+                // New entry button
+                Button(action: {}) {
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                        Text("New Entry")
+                    }
+                    .padding()
+                    .background(ColorTheme.accentPrimary)
+                    .foregroundColor(.white)
+                    .cornerRadius(25)
                 }
-                .padding()
-                .background(ColorTheme.accentPrimary)
-                .foregroundColor(.white)
-                .cornerRadius(25)
+                .padding(.vertical, 1.remToPt())
             }
-            .padding(.bottom, 1.remToPt())
+            .frame(maxWidth: 800)
         }
-        .padding(2.remToPt())
     }
 }
 

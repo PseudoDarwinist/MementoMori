@@ -1,61 +1,119 @@
 import SwiftUI
 import UIKit
 
-/// Applies the main app background effects
-struct BackgroundEffects: ViewModifier {
-    var includeGlowEffects: Bool = true
-    var reducedMotion: Bool = false
+/// View modifier for applying app background effects
+struct BackgroundEffectsModifier: ViewModifier {
+    // MARK: - Properties
+    
+    /// Whether to use reduced effects for performance/accessibility
+    @AppStorage("usesReducedMotion") var usesReducedMotion: Bool = false
+    
+    /// Whether the app is running on a lower performance device
+    var isLowPerformanceDevice: Bool {
+        // Simple detection - could be improved with more device detection
+        #if os(iOS)
+        let deviceModel = UIDevice.current.model
+        return deviceModel.contains("iPod") || deviceModel.contains("iPad") && UIDevice.current.systemVersion.compare("14.0", options: .numeric) == .orderedAscending
+        #else
+        return false
+        #endif
+    }
+    
+    /// Whether to show reduced effects
+    var shouldReduceEffects: Bool {
+        usesReducedMotion || isLowPerformanceDevice
+    }
+    
+    // MARK: - Body
     
     func body(content: Content) -> some View {
         ZStack {
-            // Base background color
-            ColorTheme.backgroundDarkest
+            // Base background - pure black
+            Color.black
                 .ignoresSafeArea()
             
-            // Radial gradient vignette
-            RadialGradient(
-                gradient: Gradient(colors: [
-                    ColorTheme.backgroundPrimary.opacity(0.3),
-                    ColorTheme.backgroundDarkest
-                ]),
-                center: .center,
-                startRadius: 10,
-                endRadius: 600
-            )
-            .ignoresSafeArea()
-            
-            if includeGlowEffects {
-                // Red accent glow at top-left
-                Circle()
-                    .fill(ColorTheme.redGlow)
-                    .frame(width: 350, height: 350)
-                    .blur(radius: 80)
-                    .position(x: UIScreen.main.bounds.width * 0.1, y: UIScreen.main.bounds.height * 0.1)
-                    .opacity(reducedMotion ? 0.1 : 0.1)
-                
-                // Blue accent glow at bottom-right
-                Circle()
-                    .fill(ColorTheme.blueGlow)
-                    .frame(width: 450, height: 450)
-                    .blur(radius: 80)
-                    .position(x: UIScreen.main.bounds.width * 0.9, y: UIScreen.main.bounds.height * 0.9)
-                    .opacity(reducedMotion ? 0.1 : 0.1)
+            // Cinematic vignette effect with radial gradient
+            if !shouldReduceEffects {
+                RadialGradient(
+                    gradient: Gradient(
+                        colors: [
+                            Color(hex: "071B33"), // Center color specified
+                            Color(hex: "071B33").opacity(0.7),
+                            Color(hex: "071B33").opacity(0.4),
+                            Color(hex: "071B33").opacity(0.1),
+                            Color.clear
+                        ]
+                    ),
+                    center: .center,
+                    startRadius: 50,
+                    endRadius: 800
+                )
+                .ignoresSafeArea()
+            } else {
+                // Simplified background for reduced effects
+                Color(hex: "071B33").opacity(0.8)
+                    .ignoresSafeArea()
             }
             
-            // Content
+            // Red accent glow - top left (more subtle)
+            if !shouldReduceEffects {
+                Circle()
+                    .fill(ColorTheme.accentPrimary)
+                    .frame(width: 250, height: 250)
+                    .position(x: -50, y: -50)
+                    .blur(radius: 80)
+                    .opacity(0.12)
+                    .ignoresSafeArea()
+            }
+            
+            // Blue accent glow - bottom right (more subtle)
+            if !shouldReduceEffects {
+                Circle()
+                    .fill(ColorTheme.accentSecondary)
+                    .frame(width: 350, height: 350)
+                    .position(x: UIScreen.main.bounds.width + 50, y: UIScreen.main.bounds.height + 50)
+                    .blur(radius: 80)
+                    .opacity(0.12)
+                    .ignoresSafeArea()
+            }
+            
+            // Main content
             content
+                .zIndex(10) // Ensure content is above background effects
         }
+        // Apply all vendor prefixes for blur through SwiftUI's built-in handling
     }
 }
 
+// MARK: - View Extension
+
 extension View {
-    /// Apply the main app background effects
+    /// Apply background effects to the view
+    func withBackgroundEffects() -> some View {
+        self.modifier(BackgroundEffectsModifier())
+    }
+    
+    /// Create a glass morphism effect for components
     /// - Parameters:
-    ///   - includeGlowEffects: Whether to include the accent glow effects
-    ///   - reducedMotion: Whether to use reduced motion variant
-    /// - Returns: Modified view
-    func withBackgroundEffects(includeGlowEffects: Bool = true, reducedMotion: Bool = false) -> some View {
-        self.modifier(BackgroundEffects(includeGlowEffects: includeGlowEffects, reducedMotion: reducedMotion))
+    ///   - cornerRadius: Corner radius of the glass panel
+    ///   - opacity: Opacity of the background color
+    /// - Returns: Modified view with glass effect
+    func glassMorphism(cornerRadius: CGFloat = 1.5.remToPt(), opacity: CGFloat = 0.2) -> some View {
+        self.background(
+            ZStack {
+                // Use the deeper blue with 20% opacity as specified
+                Color(hex: "031429").opacity(opacity)
+                
+                // Add blur effect
+                VisualEffectView(effect: UIBlurEffect(style: .dark))
+                    .opacity(0.8)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(ColorTheme.borderColor, lineWidth: 1)
+            )
+        )
     }
     
     /// Create a view background with the specified opacity and blur
@@ -67,9 +125,10 @@ extension View {
     func glassPanelBackground(opacity: CGFloat = 0.2, blur: CGFloat = 15, cornerRadius: CGFloat = 1.5.remToPt()) -> some View {
         self.background(
             ZStack {
-                ColorTheme.panelBackground
+                Color(hex: "031429")
                     .opacity(opacity)
                 
+                // Add blur effect
                 VisualEffectView(effect: UIBlurEffect(style: .dark))
                     .opacity(0.8)
             }

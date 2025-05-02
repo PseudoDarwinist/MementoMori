@@ -26,19 +26,6 @@ struct GlassMorphism: ViewModifier {
     }
 }
 
-/// UIViewRepresentable for UIVisualEffectView to create blur effects
-struct VisualEffectView: UIViewRepresentable {
-    let effect: UIVisualEffect
-    
-    func makeUIView(context: Context) -> UIVisualEffectView {
-        return UIVisualEffectView(effect: effect)
-    }
-    
-    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
-        uiView.effect = effect
-    }
-}
-
 extension View {
     /// Apply glass morphism effect to a view
     /// - Parameters:
@@ -53,4 +40,4 @@ extension View {
     ) -> some View {
         self.modifier(GlassMorphism(cornerRadius: cornerRadius, opacity: opacity, blurRadius: blurRadius))
     }
-} 
+}

@@ -86,7 +86,7 @@ struct ProgressBar: View {
             }
         }
         // Update progress when percentage changes
-        .onChange(of: percentage) { newValue in
+        .onChange(of: percentage) { oldValue, newValue in
             if animated {
                 withAnimation(.easeOut(duration: 1.0)) {
                     progress = newValue
